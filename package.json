@@ -2,18 +2,12 @@
 	"name": "tiny-tool-kit",
 	"displayName": "轻娱工具集",
 	"description": "轻娱工具集",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "Geequlim",
 	"icon": "media/logo.png",
-	"engines": {
-		"vscode": "^1.66.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"workspaceContains:project.tiny"
-	],
+	"engines": { "vscode": "^1.66.0" },
+	"categories": [ "Other" ],
+	"activationEvents": [ "*" ],
 	"main": "./dist/main.js",
 	"contributes": {
 		"viewsContainers": {
@@ -55,6 +49,22 @@
 				"command": "games.tinyfun.vscode/item/context/run",
 				"title": "运行",
 				"icon": "$(run)"
+			},
+			{
+				"command": "games.tinyfun.vscode/create-project",
+				"title": "创建基于 tiny-game-kit 项目"
+			}
+		],
+		"configuration": [
+			{
+				"title": "轻娱工具集",
+				"properties": {
+					"tinyfun.templateProjectRepo": {
+						"type": "string",
+						"default": "http://git.tinyfun.studio:81/tinyfun/tiny-game-kit.git",
+						"description": "用于创建项目的模板项目"
+					}
+				}
 			}
 		]
 	},
@@ -67,6 +77,7 @@
 		"build": "vsce package"
 	},
 	"devDependencies": {
+		"@types/cross-spawn": "^6.0.2",
 		"@types/glob": "^7.2.0",
 		"@types/js-yaml": "^4.0.5",
 		"@types/mocha": "^9.1.0",
@@ -85,6 +96,9 @@
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
+		"chalk": "^5.0.1",
+		"cross-spawn": "^7.0.3",
+		"fast-glob": "^3.2.11",
 		"js-yaml": "^4.1.0"
 	}
 }

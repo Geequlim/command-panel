@@ -3,10 +3,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-type Nullable<T> = T | null | undefined;
-
-const PROJECT_FILE = 'project.tiny';
-const PACKAGE_NAME = 'games.tinyfun.vscode';
+import { PACKAGE_NAME, Nullable, PROJECT_FILE } from './constants';
 
 interface ICommand {
 	/** 命令名称, 展示在命令面板中的标题 */
@@ -25,7 +22,7 @@ interface ITinyProjectConfigs {
 	[key: string]: ICommand
 }
 
-export class TinyVSCodePlugin {
+export class CommandPanel {
 	private output = vscode.window.createOutputChannel(PACKAGE_NAME);
 	private panels: ActionPanel[] = [];
 
