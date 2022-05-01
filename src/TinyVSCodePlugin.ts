@@ -12,7 +12,7 @@ const PACKAGE_NAME = 'games.tinyfun.vscode';
 interface ICommand {
 	name: string;
 	description?: string;
-	command?: string;
+	command?: string | string[];
 	actions?: ICommand[];
 }
 
@@ -35,7 +35,8 @@ export class TinyVSCodePlugin {
 				return this.runCommand(cmd.command, cmd.name);
 			});
 			vscode.commands.registerCommand(`${PACKAGE_NAME}/run-command`, (item: TreeItem) => {
-				return this.runCommand((item.command as vscode.Command).command, item.label as string);
+				const cmd = item.options as Required<ICommand>;
+				return this.runCommand(cmd.command, item.label as string);
 			});
 
 			this.panels = [
@@ -49,14 +50,17 @@ export class TinyVSCodePlugin {
 		}
 	}
 
-	private runCommand(command: string, title: string) {
+	private runCommand(command: string | string[], title: string) {
 		return new Promise<void>((resolve, reject) => {
 			let existingTerminal = vscode.window.terminals.find(t => t.name === title);
 			if (existingTerminal) {
 				existingTerminal.dispose();
 			}
 			let terminal = vscode.window.createTerminal(title);
-			terminal.sendText(command, true);
+			let cmds: string[] = [];
+			if (Array.isArray(command)) cmds = command.slice();
+			if (typeof command === 'string') cmds = [command];
+			cmds.forEach(cmd => terminal.sendText(cmd, true));
 			terminal.show();
 			resolve();
 		});
