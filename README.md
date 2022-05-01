@@ -1,70 +1,82 @@
-# tiny-took-kit README
+# 轻娱网络 VSCode 工具集
 
-This is the README for your extension "tiny-took-kit". After writing up a brief description, we recommend including the following sections.
+## 命令面板
+用于一键执行项目常用指令，可以根据项目需要配置指令。当项目内存在 `project.tiny` 文件时激活该功能，此文件用于配置面板内的命令。
 
-## Features
+通过 `develop`， `publish` 和 `tools` 字段配置 `开发`, `发布` 和 `工具` 三个面板内的命令内容。配置使用 yaml 语言, 数据结构如下所示的树形配置数据。
+```typescript
+interface ICommand {
+	/** 命令名称, 展示在命令面板中的标题 */
+	name: string;
+	/** 命令描述，命令名称后的灰色描述信息 */
+	description?: string;
+	/** 鼠标悬浮后的提示信息 */
+	tooltip?: string;
+	/** 命令的执行内容，用于包含子任务可以不填 */
+	command?: string | string[];
+	/** 子任务列表 */
+	actions?: ICommand[];
+}
+```
+<details>
+<summary>查看配置示例</summary>
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+```yaml
+# project.tiny 文件
+develop:
+  actions:
+    - name: LayaAir 开发
+      actions:
+        - name: dev
+          description: 启动开发编译服务
+          command: yarn concurrently -k "yarn serve" "yarn webpack --config laya/webpack.config.js --watch --env esbuild=true entry=develop ws=3102"
+        - name: dev:full
+          description: 编译全部平台组件
+          command: yarn concurrently -k "yarn serve" "yarn webpack --config laya/webpack.config.js --watch --env esbuild=true entry=all ws=3102"
+        - name: 生成 Laya3D 代码
+          description: 从 Unity 导出的资源生成绑定代码
+          command: node tools/bin/cli.js laya laya/laya3d.yaml
+        - name: FairyGUI 导出
+          description: 需要激活专业版本 FairyGUI
+          command: node tools/bin/cli.js fairygui laya
 
-For example if there is an image subfolder under your extension project workspace:
+    - name: CLI 工具
+      actions:
+        - name: dev
+          description: 启动编译服务
+          command: yarn webpack --config tools/webpack.config.js --watch --env esbuild=true target=ES2020
 
-\!\[feature X\]\(images/feature-x.png\)
+    - name: Unity 开发
+      actions:
+        - name: dev
+          description: 启动开发编译服务
+          command: yarn concurrently -k "yarn serve" "yarn webpack --config unity/webpack.config.js --watch --env ws=3102 esbuild=true entry=dev"
+        - name: dev:full
+          description: 启动编译全部服务
+          command: yarn concurrently -k "yarn serve" "yarn webpack --config laya/webpack.config.js --watch --env esbuild=true entry=all ws=3102"
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+publish:
+  actions:
+    - name: LayaAir 小游戏
+      actions:
+        - name: H5 Web 版
+          command: node tools/bin/cli.js publish laya web
+        - name: 字节小游戏
+          command: node tools/bin/cli.js publish laya bytedance
+        - name: 微信小游戏
+          command: node tools/bin/cli.js publish laya wechat
+    - name: LayaNative 安卓
+      actions:
+        - name: 无第三方SDK
+          command: node tools/bin/cli.js publish laya android-bare
+        - name: 233乐园
+          command: node tools/bin/cli.js publish laya android_233
+tools:
+  actions:
+    - name: 合并框架
+      description: 合并前确认git工作区是干净的
+      command: # 逐个执行多个命令
+        - git fetch upstream
+        - git merge upstream/master
+```
+</details>

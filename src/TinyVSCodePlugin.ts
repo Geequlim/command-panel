@@ -8,11 +8,16 @@ type Nullable<T> = T | null | undefined;
 const PROJECT_FILE = 'project.tiny';
 const PACKAGE_NAME = 'games.tinyfun.vscode';
 
-
 interface ICommand {
+	/** 命令名称, 展示在命令面板中的标题 */
 	name: string;
+	/** 命令描述，命令名称后的灰色描述信息 */
 	description?: string;
+	/** 鼠标悬浮后的提示信息 */
+	tooltip?: string;
+	/** 命令的执行内容，用于包含子任务可以不填 */
 	command?: string | string[];
+	/** 子任务列表 */
 	actions?: ICommand[];
 }
 
@@ -107,19 +112,13 @@ class ActionPanel implements vscode.TreeDataProvider<TreeItem> {
 
 	refresh(actions: ICommand) {
 		this.root = this.parseCommand(actions, null);
-		// for (const [name, commands] of Object.entries(actions)) {
-		// 	const group = new TreeItem(name, this.root, vscode.TreeItemCollapsibleState.Expanded);
-		// 	for (const cmd of commands) {
-		// 		group.children.push(this.parseCommand(cmd, group));
-		// 	}
-		// 	this.root.children.push(group);
-		// }
 		this._onDidChangeTreeData.fire(null);
 	}
 
 	private parseCommand(cmd: ICommand, parent: Nullable<TreeItem>): TreeItem {
 		const item = new TreeItem(cmd.name, parent, cmd.actions?.length ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
 		item.options = cmd;
+		item.tooltip = cmd.tooltip;
 		item.description = cmd.description;
 		item.contextValue = cmd.command ? `games.tinyfun.vscode.view.item.runnable` : 'games.tinyfun.vscode.view.item.group';
 		if (cmd.actions?.length) {
