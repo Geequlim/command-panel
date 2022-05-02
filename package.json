@@ -2,7 +2,7 @@
 	"name": "tiny-tool-kit",
 	"displayName": "轻娱工具集",
 	"description": "轻娱工具集",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"publisher": "Geequlim",
 	"icon": "media/logo.png",
 	"engines": { "vscode": "^1.66.0" },
@@ -49,6 +49,11 @@
 				"command": "games.tinyfun.vscode/item/context/run",
 				"title": "运行",
 				"icon": "$(run)"
+			},
+			{
+				"command": "games.tinyfun.vscode/edit-project",
+				"title": "编辑",
+				"icon": "$(edit)"
 			},
 			{
 				"command": "games.tinyfun.vscode/create-project",

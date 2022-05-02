@@ -12,6 +12,8 @@ interface ICommand {
 	description?: string;
 	/** 鼠标悬浮后的提示信息 */
 	tooltip?: string;
+	/** 命令执行终端面板的标题 */
+	title?: string;
 	/** 命令的执行内容，用于包含子任务可以不填 */
 	command?: string | string[];
 	/** 子任务列表 */
@@ -34,11 +36,23 @@ export class CommandPanel {
 		if (this.workspace) {
 			vscode.commands.registerCommand(`${PACKAGE_NAME}/item/context/run`, (item: TreeItem) => {
 				const cmd = item.options as Required<ICommand>;
-				return this.runCommand(cmd.command, cmd.name);
+				return this.runCommand(cmd.command, cmd.title || cmd.name);
 			});
 			vscode.commands.registerCommand(`${PACKAGE_NAME}/run-command`, (item: TreeItem) => {
+				debugger
 				const cmd = item.options as Required<ICommand>;
 				return this.runCommand(cmd.command, item.label as string);
+			});
+			vscode.commands.registerCommand(`${PACKAGE_NAME}/edit-project`, async (item: TreeItem) => {
+				const uri = vscode.Uri.file(path.join((this.workspace as vscode.WorkspaceFolder).uri.fsPath, PROJECT_FILE));
+				const doc = await vscode.workspace.openTextDocument(uri);
+				const options = item.options as ICommand ;
+				const search = (options.command || options.description || options.name) as string;
+				const text = doc.getText();
+				const lines = text.substring(0, text.indexOf(search)).split('\n');
+				const line = lines.length - 1;
+				const pos = new vscode.Position(line, lines[lines.length - 1].length);
+				vscode.window.showTextDocument(doc, { selection: new vscode.Range(pos, pos) });
 			});
 
 			this.panels = [
@@ -47,7 +61,7 @@ export class CommandPanel {
 				new ActionPanel(this.workspace, 'games.tinyfun.vscode.view.tools'),
 			];
 			
-			vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(this.workspace, 'project.tiny')).onDidChange(this.refresh.bind(this));
+			vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(this.workspace, PROJECT_FILE)).onDidChange(this.refresh.bind(this));
 			this.refresh();
 		}
 	}
@@ -118,6 +132,7 @@ class ActionPanel implements vscode.TreeDataProvider<TreeItem> {
 		item.tooltip = cmd.tooltip;
 		item.description = cmd.description;
 		item.contextValue = cmd.command ? `games.tinyfun.vscode.view.item.runnable` : 'games.tinyfun.vscode.view.item.group';
+		item.command = { title: '编辑', command: `${PACKAGE_NAME}/edit-project`, arguments: [ item ] };
 		if (cmd.actions?.length) {
 			for (const sc of cmd.actions) {
 				item.children.push(this.parseCommand(sc, item));

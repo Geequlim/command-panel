@@ -15,6 +15,8 @@
 interface ICommand {
 	/** 命令名称, 展示在命令面板中的标题 */
 	name: string;
+	/** 命令执行终端面板的标题 */
+	title?: string;
 	/** 命令描述，命令名称后的灰色描述信息 */
 	description?: string;
 	/** 鼠标悬浮后的提示信息 */
