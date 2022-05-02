@@ -47,7 +47,8 @@ export class CommandPanel {
 				const uri = vscode.Uri.file(path.join((this.workspace as vscode.WorkspaceFolder).uri.fsPath, PROJECT_FILE));
 				const doc = await vscode.workspace.openTextDocument(uri);
 				const options = item.options as ICommand ;
-				const search = (options.command || options.description || options.name) as string;
+				const cmmand = Array.isArray(options.command) ? options.command[options.command.length - 1] : options.command;
+				const search = (cmmand || options.description || options.name) as string;
 				const text = doc.getText();
 				const lines = text.substring(0, text.indexOf(search)).split('\n');
 				const line = lines.length - 1;
