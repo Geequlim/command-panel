@@ -116,7 +116,7 @@ export class ProjectCreator {
 			'git checkout -b famework',
 			'git checkout -b master',
 		];
-		for (const cmd of cmds) await this.execSync(cmd);
+		for (const cmd of cmds) await this.exec(cmd);
 
 		const replace = (file: string, patter: string | RegExp, content: string) => {
 			let text = fs.readFileSync(file).toString('utf-8');
@@ -239,7 +239,7 @@ export class ProjectCreator {
 			let depsDone = false;
 			for (let i = 1; i <= 3; i++) {
 				try {
-					await this.execSync('yarn install');
+					await this.exec('yarn install');
 					depsDone = true;
 					break;
 				} catch (error) {
@@ -256,10 +256,10 @@ export class ProjectCreator {
 		}
 		this.log('项目初始化完毕', p.project);
 
-		await this.execSync('git add .');
-		await this.execSync(`git commit -m"Initialize project ${p.project}"`);
+		await this.exec('git add .');
+		await this.exec(`git commit -m"Initialize project ${p.project}"`);
 		try {
-			await this.execSync('git push origin master');
+			await this.exec('git push origin master');
 		} catch (error) {
 			this.log('推送到远程项目仓库出错', p.repo);
 		}
@@ -267,7 +267,7 @@ export class ProjectCreator {
 		return p;
 	}
 
-	execSync(command: string) {
+	exec(command: string) {
 		return new Promise<void>((resolve, reject) => {
 			this.log('>', command);
 			const child = cp.exec(command);

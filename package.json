@@ -2,7 +2,7 @@
 	"name": "tiny-tool-kit",
 	"displayName": "轻娱工具集",
 	"description": "轻娱工具集",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"publisher": "Geequlim",
 	"icon": "media/logo.png",
 	"engines": { "vscode": "^1.66.0" },

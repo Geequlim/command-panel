@@ -27,6 +27,7 @@ interface ITinyProjectConfigs {
 export class CommandPanel {
 	private output = vscode.window.createOutputChannel(PACKAGE_NAME);
 	private panels: ActionPanel[] = [];
+	private terminals: vscode.Terminal[] = [];
 
 	get workspace(): Nullable<vscode.WorkspaceFolder> {
 		if (!vscode.workspace.workspaceFolders) return null;
@@ -39,7 +40,6 @@ export class CommandPanel {
 				return this.runCommand(cmd.command, cmd.title || cmd.name);
 			});
 			vscode.commands.registerCommand(`${PACKAGE_NAME}/run-command`, (item: TreeItem) => {
-				debugger
 				const cmd = item.options as Required<ICommand>;
 				return this.runCommand(cmd.command, item.label as string);
 			});
@@ -79,6 +79,7 @@ export class CommandPanel {
 			if (typeof command === 'string') cmds = [command];
 			cmds.forEach(cmd => terminal.sendText(cmd, true));
 			terminal.show();
+			this.terminals.push(terminal);
 			resolve();
 		});
 	}
@@ -98,7 +99,8 @@ export class CommandPanel {
 	}
 
 	dispose() {
-
+		this.terminals.forEach(t => t.dispose());
+		this.terminals = [];
 	}
 }
 
