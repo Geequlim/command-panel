@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import { getConfiguration, PACKAGE_NAME } from './constants';
-import { TextStyle, wait } from './utils';
+import { getFiles, TextStyle, wait } from './utils';
 
 export class ProjectCreator {
 
@@ -171,8 +171,7 @@ export class ProjectCreator {
 			replace('config.yaml', /name:\s+.*/, `name: ${p.name}`);
 			replace('config.yaml', /project:\s+.*/, `project: ${p.project}`);
 			replace('config.yaml', /appid:\s+.*/, `appid: ${p.appid}`);
-			replace('project.tiny', /\.\.\/template\//g, `../`);
-			replace('project.tiny', /\s+template\//g, ` `);
+			replace('project.tiny', /\s+template\//g, ` ../`);
 		}
 
 		if (true) {
@@ -194,12 +193,12 @@ export class ProjectCreator {
 				}
 			);
 
-			// 设置 splash 导出目录
-			replace(
-				path.resolve('../UI/assets/Splash/package.xml'),
-				'<publish name="" path="../../Assets/res/Resources/splash" packageCount="2" genCode="true"/>',
-				'<publish name="" path="../project/Assets/res/Resources/splash" packageCount="2" genCode="true"/>'
-			);
+			// 设置导出目录
+			const packageFiles = getFiles('../UI/assets/*/package.xml');
+			for (const pkgXml of packageFiles) {
+				replace(pkgXml, 'path="../../', 'path="../project/');
+				replace(pkgXml, 'codePath="../../', 'codePath="../project/');
+			}
 			// 复制字体文件
 			copyFile(path.resolve('../UI/assets/Game/res/江城圆体-600W.ttf'), path.resolve('Assets/res/Resources/fonts/main.ttf'));
 		}
