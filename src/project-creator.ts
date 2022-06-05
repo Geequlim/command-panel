@@ -188,8 +188,18 @@ export class ProjectCreator {
 			modifyJSON(
 				path.resolve('../UI/settings/Publish.json'),
 				value => {
-					value.path = '../project/Assets/res/ui';
-					value.codeGeneration.codePath = '../project/src/game/view/gen/ui';
+					value.path = value.path.replace('../../', '../project/');
+					value.codeGeneration.codePath = value.codeGeneration.codePath.replace('../../', '../project/');
+				}
+			);
+
+			// 配置多语言
+			modifyJSON(
+				path.resolve('../UI/settings/i18n.json'),
+				value => {
+					for (const lang of value.langFiles) {
+						lang.path = lang.path.replace('../../', '../project/');
+					}
 				}
 			);
 
