@@ -215,11 +215,8 @@ export class ProjectCreator {
 
 		if (true) {
 			this.log('调整转表配置');
-
 			const configFile = '../配置/excel-exporter.yaml';
-			replace(configFile, /directory: \.\.\/\.\.\/Assets\/res\/data/g, 'directory: ../project/Assets/res/data');
-			replace(configFile, /root: \.\.\/\.\./g, 'root: ../project' );
-
+			replace(configFile, /\.\.\/\.\./g, '../project' );
 			modifyJSON('tools/package.json', value => {
 				value.scripts['转表'] = 'cd ../../配置 && node ./binary.js ./excel-exporter.yaml';
 			});
