@@ -48,12 +48,20 @@ export class CommandPanel {
 				const doc = await vscode.workspace.openTextDocument(uri);
 				const options = item.options as ICommand ;
 				const cmmand = Array.isArray(options.command) ? options.command[options.command.length - 1] : options.command;
-				const search = (cmmand || options.description || options.name) as string;
 				const text = doc.getText();
-				const lines = text.substring(0, text.indexOf(search)).split('\n');
-				const line = lines.length - 1;
-				const pos = new vscode.Position(line, lines[lines.length - 1].length);
-				vscode.window.showTextDocument(doc, { selection: new vscode.Range(pos, pos) });
+				let pos = { line: 0, character: 0 };
+				for (const search of [cmmand, options.description, options.name]) {
+					if (!search) continue;
+					const startAt = text.indexOf(search);
+					if (startAt !== -1) {
+						const lines = text.substring(0, startAt).split('\n');
+						pos.line = lines.length - 1;
+						pos.character = lines[lines.length - 1].length;
+						break;
+					}
+				}
+				const p = new vscode.Position(pos.line, pos.character);
+				vscode.window.showTextDocument(doc, { selection: new vscode.Range(p, p) });
 			});
 
 			this.panels = [
