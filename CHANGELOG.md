@@ -1,4 +1,8 @@
 # Change Log
+- 0.1.1
+ - Remove tinyfun related features
+ - Move configuration file to `.vscode/commands.yaml`
+
 - 0.1.0
  - 优化指令面板点击后对应的指令位置查找功能
  - 优化创建项目的配表配置项
