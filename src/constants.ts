@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 export type Nullable<T> = T | null | undefined;
-export const PROJECT_FILE = 'project.tiny';
+export const PROJECT_FILE = '.vscode/commands.yaml';
 export const PACKAGE_NAME = 'games.tinyfun.vscode';
 export const CONFIG_CONTAINER = 'tinyfun';
 

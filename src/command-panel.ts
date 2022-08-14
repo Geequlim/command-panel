@@ -20,13 +20,9 @@ interface ICommand {
 	actions?: ICommand[];
 }
 
-interface ITinyProjectConfigs {
-	[key: string]: ICommand
-}
-
 export class CommandPanel {
 	private output = vscode.window.createOutputChannel(PACKAGE_NAME);
-	private panels: ActionPanel[] = [];
+	private panel: Nullable<ActionPanel> = null;
 	private terminals: vscode.Terminal[] = [];
 
 	get workspace(): Nullable<vscode.WorkspaceFolder> {
@@ -64,11 +60,7 @@ export class CommandPanel {
 				vscode.window.showTextDocument(doc, { selection: new vscode.Range(p, p) });
 			});
 
-			this.panels = [
-				new ActionPanel(this.workspace, 'games.tinyfun.vscode.view.develop'),
-				new ActionPanel(this.workspace, 'games.tinyfun.vscode.view.publish'),
-				new ActionPanel(this.workspace, 'games.tinyfun.vscode.view.tools'),
-			];
+			this.panel = new ActionPanel(this.workspace, 'games.tinyfun.vscode.view.commands');
 			
 			vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(this.workspace, PROJECT_FILE)).onDidChange(this.refresh.bind(this));
 			this.refresh();
@@ -94,15 +86,17 @@ export class CommandPanel {
 
 	private refresh() {
 		const workspace = this.workspace as vscode.WorkspaceFolder;
-		const projectFile = path.join(workspace.uri.fsPath, PROJECT_FILE);
+		const commandFile = path.join(workspace.uri.fsPath, PROJECT_FILE);
 		try {
-			const project = yaml.load(fs.readFileSync(projectFile, 'utf8')) as ITinyProjectConfigs;
-			for (const panel of this.panels) {
-				const parts = panel.viewId.split('.');
-				panel.refresh(project[parts[parts.length - 1]]);
+			const actions = yaml.load(fs.readFileSync(commandFile, 'utf8')) as ICommand[];
+			if (Array.isArray(actions)) {
+				this.panel?.refresh({ name: 'Commands', actions });
+			} else {
+				throw new Error("Invalid command file content");
 			}
 		} catch (error) {
-			this.output.appendLine(`解析项目文件出错:\n${error}`);
+			this.output.appendLine(`Failed to parse commands from ${commandFile}`);
+			this.output.appendLine(`${error}`);
 		}
 	}
 
@@ -140,10 +134,10 @@ class ActionPanel implements vscode.TreeDataProvider<TreeItem> {
 	private parseCommand(cmd: ICommand, parent: Nullable<TreeItem>): TreeItem {
 		const item = new TreeItem(cmd.name, parent, cmd.actions?.length ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
 		item.options = cmd;
-		item.tooltip = cmd.tooltip;
 		item.description = cmd.description;
+		item.tooltip = cmd.tooltip || cmd.description || cmd.name;
 		item.contextValue = cmd.command ? `games.tinyfun.vscode.view.item.runnable` : 'games.tinyfun.vscode.view.item.group';
-		item.command = { title: '编辑', command: `${PACKAGE_NAME}/edit-project`, arguments: [ item ] };
+		item.command = { title: 'Edit', command: `${PACKAGE_NAME}/edit-project`, arguments: [ item ] };
 		if (cmd.actions?.length) {
 			for (const sc of cmd.actions) {
 				item.children.push(this.parseCommand(sc, item));

@@ -1,37 +1,25 @@
 {
-	"name": "tiny-tool-kit",
-	"displayName": "轻娱工具集",
-	"description": "轻娱工具集",
-	"version": "0.1.0",
+	"name": "command-panel",
+	"displayName": "Command Panel",
+	"description": "Run commands by one click",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Geequlim/command-panel"
+	},
+	"version": "0.1.1",
 	"publisher": "Geequlim",
 	"icon": "media/logo.png",
 	"engines": { "vscode": "^1.66.0" },
 	"categories": [ "Other" ],
-	"activationEvents": [ "*" ],
+	"activationEvents": [ "onView:games.tinyfun.vscode.view.commands" ],
 	"main": "./dist/main.js",
 	"contributes": {
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "tiny-tool-kit",
-					"title": "轻娱工具集",
-					"icon": "media/icon.svg"
-				}
-			]
-		},
 		"views": {
-			"tiny-tool-kit": [
+			"explorer": [
 				{
-					"id": "games.tinyfun.vscode.view.develop",
-					"name": "开发"
-				},
-				{
-					"id": "games.tinyfun.vscode.view.publish",
-					"name": "发布"
-				},
-				{
-					"id": "games.tinyfun.vscode.view.tools",
-					"name": "工具"
+					"id": "games.tinyfun.vscode.view.commands",
+					"icon": "media/icon.svg",
+					"name": "Command Panel"
 				}
 			]
 		},
@@ -47,30 +35,16 @@
 		"commands": [
 			{
 				"command": "games.tinyfun.vscode/item/context/run",
-				"title": "运行",
+				"title": "Run",
 				"icon": "$(run)"
 			},
 			{
 				"command": "games.tinyfun.vscode/edit-project",
-				"title": "编辑",
+				"title": "Edit",
 				"icon": "$(edit)"
-			},
-			{
-				"command": "games.tinyfun.vscode/create-project",
-				"title": "创建基于 tiny-game-kit 项目"
 			}
 		],
 		"configuration": [
-			{
-				"title": "轻娱工具集",
-				"properties": {
-					"tinyfun.templateProjectRepo": {
-						"type": "string",
-						"default": "http://git.tinyfun.studio:81/tinyfun/tiny-game-kit.git",
-						"description": "用于创建项目的模板项目"
-					}
-				}
-			}
 		]
 	},
 	"scripts": {
