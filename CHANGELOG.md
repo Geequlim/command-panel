@@ -1,4 +1,8 @@
 # Change Log
+- 0.1.2
+ - Fix double run icon in new version of VSCode
+ - Using english in README.md
+
 - 0.1.1
  - Remove tinyfun related features
  - Move configuration file to `.vscode/commands.yaml`

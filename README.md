@@ -1,25 +1,31 @@
-## 命令面板
+## Run commands by one click
 ![](media/screenshot.png)
 
-用于一键执行项目常用指令，可以根据项目需要配置指令。当项目内存在 `.vscode/commands.yaml` 文件时激活该功能，此文件用于配置面板内的命令。
+This plugin provides a panel for defining a series of common commands that can be executed with one click.
+This plugin is activated when the `.vscode/commands.yaml` file exists in your project which is the definition file of your commands.
+
 ```typescript
 interface ICommand {
-	/** 命令名称, 展示在命令面板中的标题 */
+	/** Command name, the title displayed in the command palette */
 	name: string;
-	/** 命令执行终端面板的标题 */
+	/** The title of the command execution in terminal panel */
 	title?: string;
-	/** 命令描述，命令名称后的灰色描述信息 */
+	/** Command description, hint description after the command name */
 	description?: string;
-	/** 鼠标悬浮后的提示信息 */
+	/** The prompt message when the mouse is hovered */
 	tooltip?: string;
-	/** 命令的执行内容，用于包含子任务可以不填 */
+	/**
+	 * The execution content of the command
+	 * When an array given the commands will be executed one by one
+	 */
 	command?: string | string[];
-	/** 子任务列表 */
+	/** Subtask list */
 	actions?: ICommand[];
 }
 ```
+
 <details>
-<summary>查看配置示例</summary>
+<summary>Configuration Example</summary>
 
 ```yaml
 # .vscode/commands.yaml

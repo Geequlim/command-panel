@@ -6,7 +6,7 @@
 		"type": "git",
 		"url": "https://github.com/Geequlim/command-panel"
 	},
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"publisher": "Geequlim",
 	"icon": "media/logo.png",
 	"engines": { "vscode": "^1.66.0" },
@@ -37,11 +37,6 @@
 				"command": "games.tinyfun.vscode/item/context/run",
 				"title": "Run",
 				"icon": "$(run)"
-			},
-			{
-				"command": "games.tinyfun.vscode/edit-project",
-				"title": "Edit",
-				"icon": "$(edit)"
 			}
 		],
 		"configuration": [
